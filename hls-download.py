@@ -64,8 +64,21 @@ def downloadMediaPlaylist(url, path, index, total, playlist_name):
 
 def downloadMediaPlaylists(master_playlist_str, base_url, dir_path):
 	master_m3u8_obj = m3u8.loads(master_playlist_str)
-	print('Media playlists: {0} iFrame playlists: {1}'.format( 
-			len(master_m3u8_obj.playlists), len(master_m3u8_obj.iframe_playlists)))
+
+	# m3u8 doesn't work with audio streams. So retrive it's uri by simple regex
+	#TODO figure out more accurate way of getting audio streams
+	audio_playlists = []
+	for line in master_playlist_str.splitlines():
+		match = re.search(r'EXT-X-MEDIA:URI="(.*)",TYPE', line)
+		if match:
+			audio_playlists.append(match.group(1))
+
+	print('Media playlists: {0} iFrame playlists: {1} Audio playlists: {2}'.format( 
+			len(master_m3u8_obj.playlists), 
+			len(master_m3u8_obj.iframe_playlists),
+			len(audio_playlists)))
+
+
 	for index, playlist in enumerate(master_m3u8_obj.playlists):
 		media_playlist_url = urljoin(base_url, playlist.uri)
 		media_playlist_path = dir_path.joinpath(playlist.uri);
@@ -84,6 +97,7 @@ def downloadMediaPlaylists(master_playlist_str, base_url, dir_path):
 						 index + 1,
 						 len(master_m3u8_obj.playlists))
 
+
 	for index, playlist in enumerate(master_m3u8_obj.iframe_playlists):
 		iframe_playlist_url = urljoin(base_url, playlist.uri)
 		iframe_playlist_path = dir_path.joinpath(playlist.uri)
@@ -95,6 +109,31 @@ def downloadMediaPlaylists(master_playlist_str, base_url, dir_path):
 				len(master_m3u8_obj.iframe_playlists),
 				"iframe playlist")
 		savePlaylistToFile(iframe_playlist, iframe_playlist_path)
+
+		downloadSegments(iframe_playlist,
+						 iframe_playlist_url,
+						 iframe_playlist_path.parent,
+						 index + 1,
+						 len(master_m3u8_obj.iframe_playlists))
+
+
+	for index, playlist_uri_str in enumerate(audio_playlists):
+		audio_playlist_url = urljoin(base_url, playlist_uri_str)
+		audio_playlist_path = dir_path.joinpath(playlist_uri_str)	
+		audio_playlist = downloadMediaPlaylist(
+				audio_playlist_url,
+				audio_playlist_path,
+				index + 1,
+				len(audio_playlists),
+				"audio playlist")
+		savePlaylistToFile(audio_playlist, audio_playlist_path)
+
+		downloadSegments(audio_playlist,
+						 audio_playlist_url,
+						 audio_playlist_path.parent,
+						 index + 1,
+						 len(audio_playlists))
+
 
 def downloadMasterPlaylist(url, path):
 	print('Downloading master playlist: {0} to {1}'.format(url, path))
