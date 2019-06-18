@@ -57,26 +57,44 @@ def downloadSegments(media_playlist_str, base_url, dir_path, playlist_index, pla
 						playlist_total)
 		
 
-def downloadMediaPlaylist(url, path, index, total):
-	print('Downloading {0}/{1} media playlist: {2} to {3}'.format(
-			index, total, url, path))
+def downloadMediaPlaylist(url, path, index, total, playlist_name):
+	print('Downloading {0}/{1} {2}: {3} to {4}'.format(
+			index, total, playlist_name, url, path))
 	return urllib.request.urlopen(url).read().decode('utf-8')
 
 def downloadMediaPlaylists(master_playlist_str, base_url, dir_path):
 	master_m3u8_obj = m3u8.loads(master_playlist_str)
-	for playlist_index, playlist in enumerate(master_m3u8_obj.playlists):
+	print('Media playlists: {0} iFrame playlists: {1}'.format( 
+			len(master_m3u8_obj.playlists), len(master_m3u8_obj.iframe_playlists)))
+	for index, playlist in enumerate(master_m3u8_obj.playlists):
 		media_playlist_url = urljoin(base_url, playlist.uri)
 		media_playlist_path = dir_path.joinpath(playlist.uri);
 
-		media_playlist = downloadMediaPlaylist(media_playlist_url, 
-				media_playlist_path, playlist_index + 1, len(master_m3u8_obj.playlists))
+		media_playlist = downloadMediaPlaylist(
+				media_playlist_url, 
+				media_playlist_path, 
+				index + 1, 
+				len(master_m3u8_obj.playlists),
+				"media playlist")
 		savePlaylistToFile(media_playlist, media_playlist_path)
 
 		downloadSegments(media_playlist, 
 						 media_playlist_url, 
 						 media_playlist_path.parent,
-						 playlist_index + 1,
+						 index + 1,
 						 len(master_m3u8_obj.playlists))
+
+	for index, playlist in enumerate(master_m3u8_obj.iframe_playlists):
+		iframe_playlist_url = urljoin(base_url, playlist.uri)
+		iframe_playlist_path = dir_path.joinpath(playlist.uri)
+
+		iframe_playlist = downloadMediaPlaylist(
+				iframe_playlist_url,
+				iframe_playlist_path, 
+				index + 1, 
+				len(master_m3u8_obj.iframe_playlists),
+				"iframe playlist")
+		savePlaylistToFile(iframe_playlist, iframe_playlist_path)
 
 def downloadMasterPlaylist(url, path):
 	print('Downloading master playlist: {0} to {1}'.format(url, path))
