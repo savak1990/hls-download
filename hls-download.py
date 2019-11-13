@@ -1,6 +1,4 @@
-# written wiht python3.7
-
-# https://s3.amazonaws.com/hls-demos/nokia/index.m3u8
+#!/usr/bin/env python3.7
 
 import sys
 import re
