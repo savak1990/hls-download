@@ -9,12 +9,14 @@ from urllib.parse import urlparse
 from urllib.parse import urljoin
 import m3u8
 
+# Validation of the args
 if len(sys.argv) < 3:
 	print("Not enough arguments. Please use hls-download.py <hls url> <output dir>");
 	sys.exit()
 
 master_playlist_url = sys.argv[1]
 
+# Validation of the url
 # TODO check and add m3u8 check at the end of url
 regex = re.compile(
         r'^(?:http|ftp)s?://' # http:// or https://
