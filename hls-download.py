@@ -83,7 +83,7 @@ def downloadMediaPlaylists(master_playlist_str, base_url, dir_path):
 			len(audio_playlists)))
 
 
-	# Handle media playlists
+	# Loop over all media playlists
 	for index, playlist in enumerate(master_m3u8_obj.playlists):
 		media_playlist_url = urljoin(base_url, playlist.uri)
 		media_playlist_path = dir_path.joinpath(playlist.uri);
@@ -103,6 +103,7 @@ def downloadMediaPlaylists(master_playlist_str, base_url, dir_path):
 						 len(master_m3u8_obj.playlists))
 
 
+	# Loop over all audio playlists
 	for index, playlist_uri_str in enumerate(audio_playlists):
 		audio_playlist_url = urljoin(base_url, playlist_uri_str)
 		audio_playlist_path = dir_path.joinpath(playlist_uri_str)	
@@ -121,6 +122,7 @@ def downloadMediaPlaylists(master_playlist_str, base_url, dir_path):
 						 len(audio_playlists))
 
 
+	# Loop over all I-Frame playlists
 	for index, playlist in enumerate(master_m3u8_obj.iframe_playlists):
 		iframe_playlist_url = urljoin(base_url, playlist.uri)
 		iframe_playlist_path = dir_path.joinpath(playlist.uri)
