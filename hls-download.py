@@ -122,7 +122,7 @@ def downloadMediaPlaylists(master_playlist_str, base_url, dir_path):
 						 len(audio_playlists))
 
 
-	# Loop over all i-frame playlists
+	# Loop over all I-Frame playlists
 	for index, playlist in enumerate(master_m3u8_obj.iframe_playlists):
 		iframe_playlist_url = urljoin(base_url, playlist.uri)
 		iframe_playlist_path = dir_path.joinpath(playlist.uri)
