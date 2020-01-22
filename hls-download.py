@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.7
 
-# Currently uses 3.7 python
+# Currently uses 3.7 python for now
 
 import sys
 import re
