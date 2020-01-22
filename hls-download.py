@@ -81,6 +81,7 @@ def downloadMediaPlaylists(master_playlist_str, base_url, dir_path):
 			len(audio_playlists)))
 
 
+	# Handle media playlists
 	for index, playlist in enumerate(master_m3u8_obj.playlists):
 		media_playlist_url = urljoin(base_url, playlist.uri)
 		media_playlist_path = dir_path.joinpath(playlist.uri);
