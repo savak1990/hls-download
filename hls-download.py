@@ -1,5 +1,7 @@
 #!/usr/bin/env python3.7
 
+# Currently uses 3.7 python
+
 import sys
 import re
 from pathlib import Path
